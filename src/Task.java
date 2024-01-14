@@ -1,10 +1,9 @@
-import java.io.IOException;
 import java.util.Scanner;
 
 
 public class Task {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         String initialLine;
         String initialLine1;
         Scanner keyboard = new Scanner(System.in);
@@ -14,63 +13,41 @@ public class Task {
         String[] splitLine = initialLine.split(" "); // разделение строки на массив
 
         if (splitLine.length > 3) {  // ошибка с завершением программы, если длина массива > 3
-            try {
-                throw new IOException();
-            } catch (IOException e) {
-                System.out.println("throws Exception //т.к. формат математической операции " +
-                        "не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
-                System.exit(1);
-            }
+            throw new Exception("//т.к. формат математической операции " +
+                    "не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
+
         } else if (splitLine.length < 3) {  // ошибка с завершением программы, если длина массива < 3
-            try {
-                throw new IOException();
-            } catch (IOException e) {
-                System.out.println("throws Exception //т.к. строка не является математической операцией");
-                System.exit(1);
-            }
+            throw new Exception("throws Exception //т.к. строка не является математической операцией");
+
         } else if ((splitLine[0].contains(",") || (splitLine[0].contains(".")) || // ошибка с завершением программы,
                 // если какое-либо из чисел не целое
                 splitLine[2].contains(",")) || (splitLine[2].contains("."))) {
-            try {
-                throw new NumberFormatException();
-            } catch (NumberFormatException e) {
-                System.out.println("throws Exception //вводите только целые числа");
-                System.exit(1);
-            }
-        } else if (!"-12345678910".contains(splitLine[0]) && "-12345678910".contains(splitLine[2]) ||
-                !"-12345678910".contains(splitLine[2]) && "-12345678910".contains(splitLine[0])) { //ошибка с
-            // завершением программы, если используются разные системы счисления
-            try {
-                throw new IOException();
-            } catch (IOException e) {
-                System.out.println("throws Exception //т.к. используются одновременно разные системы счисления");
-                System.exit(1);
-            }
-        } else if ("-12345678910".contains(splitLine[0])) {
-            if ((Integer.parseInt(splitLine[0]) < 1 || Integer.parseInt(splitLine[2]) < 1) ||
-                    (Integer.parseInt(splitLine[0]) > 10 || Integer.parseInt(splitLine[2]) > 10)) {
-                // ошибка с завершением программы, если какое-либо из чисел < 1 или > 10
-                try {
-                    throw new IOException();
-                } catch (IOException e) {
-                    System.out.println("throws Exception //т.к. значения не могут быть меньше 1 " +
-                            "или больше 10");
-                    System.exit(1);
-                }
-            }
+            throw new Exception("//вводите только целые числа");
         }
 
         Calculator task = new Calculator();
+        Roman nums = new Roman();
         int result = 0;
         int firstNumber;
         int secondNumber;
 
-        if (!"12345678910".contains(splitLine[0])) { // преобразование римского числа в арабское
+        if (!nums.iSRoman(splitLine[0]) && nums.iSRoman(splitLine[2]) || // ошибка с завершение программы,
+                // если используются разные системы счисления
+                !nums.iSRoman(splitLine[2]) && nums.iSRoman(splitLine[0])) {
+            throw new Exception("//т.к. используются одновременно разные системы счисления");
+        }
+
+        if (nums.iSRoman(splitLine[0])) { // преобразование римского числа в арабское
             firstNumber = task.romanToArabic(splitLine[0]);
             secondNumber = task.romanToArabic(splitLine[2]);
         } else {
             firstNumber = Integer.parseInt(splitLine[0]);
             secondNumber = Integer.parseInt(splitLine[2]);
+        }
+
+        if (firstNumber < 0 || firstNumber > 10 || secondNumber > 10){ // ошибка с завершением программы,
+            // если какое-либо из чисел < 1 или > 10
+            throw new Exception("//т.к. значения не могут быть меньше 1 или больше 10");
         }
 
         switch (splitLine[1]) {
@@ -80,16 +57,10 @@ public class Task {
                 break;
 
             case "-":
-                if (!"12345678910".contains(splitLine[0])) {
+                if (nums.iSRoman(splitLine[0])) {
                     if (secondNumber > firstNumber) { // ошибка с завершением программы, если
                         // римское число отрицательное
-                        try {
-                            throw new IOException();
-                        } catch (IOException e) {
-                            System.out.println("throws Exception //т.к. в римской системе " +
-                                    "нет отрицательных чисел");
-                            System.exit(1);
-                        }
+                        throw new Exception("//т.к. в римской системе нет отрицательных чисел");
                     }
                 } else {
                     result = task.subtraction(firstNumber, secondNumber);
@@ -105,7 +76,7 @@ public class Task {
                 break;
         }
 
-        if (!"12345678910".contains(splitLine[0])) { // вывод результата
+        if (nums.iSRoman(splitLine[0])) { // вывод результата
             if (result == 0) {
                 System.out.println(result);
             } else {
@@ -118,29 +89,52 @@ public class Task {
 }
 
 
+class Roman { // проверка числа на принадлежность к римским цифрам
+    static String[] romanNums = new String[]{"0", "I", "V", "X", "L", "C", "D", "M"};
+
+    boolean iSRoman (String userInput) {
+
+        for (int i = 0; i < romanNums.length; i++) {
+
+            if (userInput.length() > 1) {
+                String[] userSplitLine = userInput.split("");
+                if (userSplitLine[0].equals(romanNums[i])) {
+                    return true;
+                }
+            }
+
+            if (userInput.equals(romanNums[i])) {
+                return true;
+                    }
+                }
+
+        return false;
+    }
+}
+
 class Calculator {  // метод для вычисления значений
     int firstNumber;
     int secondNumber;
 
-    int add(int userNumber1, int userNumber2) { // сложение
+    int add(int userNumber1, int userNumber2) {
         firstNumber = userNumber1;
         secondNumber = userNumber2;
         return firstNumber + secondNumber;
     }
 
-    int subtraction(int userNumber1, int userNumber2) { // вычитание
+    int subtraction(int userNumber1, int userNumber2) {
         firstNumber = userNumber1;
         secondNumber = userNumber2;
         return firstNumber - secondNumber;
     }
 
-    int multiplication(int userNumber1, int userNumber2) { // умножение
+    int multiplication(int userNumber1, int userNumber2) {
         firstNumber = userNumber1;
         secondNumber = userNumber2;
         return firstNumber * secondNumber;
     }
 
-    int division(int userNumber1, int userNumber2) { // деление
+    int division(int userNumber1, int userNumber2) {
         firstNumber = userNumber1;
         secondNumber = userNumber2;
         return firstNumber / secondNumber;
