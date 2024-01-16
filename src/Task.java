@@ -25,71 +25,75 @@ public class Task {
             throw new Exception("//вводите только целые числа");
         }
 
-        Calculator task = new Calculator();
-        Roman nums = new Roman();
-        int result = 0;
-        int firstNumber;
-        int secondNumber;
+        System.out.println(calc(splitLine));
+    }
 
-        if (!nums.iSRoman(splitLine[0]) && nums.iSRoman(splitLine[2]) || // ошибка с завершение программы,
-                // если используются разные системы счисления
-                !nums.iSRoman(splitLine[2]) && nums.iSRoman(splitLine[0])) {
-            throw new Exception("//т.к. используются одновременно разные системы счисления");
-        }
 
-        if (nums.iSRoman(splitLine[0])) { // преобразование римского числа в арабское
-            firstNumber = task.romanToArabic(splitLine[0]);
-            secondNumber = task.romanToArabic(splitLine[2]);
-        } else {
-            firstNumber = Integer.parseInt(splitLine[0]);
-            secondNumber = Integer.parseInt(splitLine[2]);
-        }
+public static String calc(String[] userInput) throws Exception {
+            Converter nums = new Converter();
+            int result = 0;
+            int firstNumber;
+            int secondNumber;
 
-        if (firstNumber < 0 || firstNumber > 10 || secondNumber > 10){ // ошибка с завершением программы,
-            // если какое-либо из чисел < 1 или > 10
-            throw new Exception("//т.к. значения не могут быть меньше 1 или больше 10");
-        }
-
-        switch (splitLine[1]) {
-
-            case "+":
-                result = task.add(firstNumber, secondNumber);
-                break;
-
-            case "-":
-                if (nums.iSRoman(splitLine[0])) {
-                    if (secondNumber > firstNumber) { // ошибка с завершением программы, если
-                        // римское число отрицательное
-                        throw new Exception("//т.к. в римской системе нет отрицательных чисел");
-                    }
-                } else {
-                    result = task.subtraction(firstNumber, secondNumber);
-                    break;
-                }
-
-            case "*":
-                result = task.multiplication(firstNumber, secondNumber);
-                break;
-
-            case "/":
-                result = task.division(firstNumber, secondNumber);
-                break;
-        }
-
-        if (nums.iSRoman(splitLine[0])) { // вывод результата
-            if (result == 0) {
-                System.out.println(result);
-            } else {
-                System.out.println(task.arabicToRoman(result));
+            if (!nums.iSRoman(userInput[0]) && nums.iSRoman(userInput[2]) || // ошибка с завершение программы,
+                    // если используются разные системы счисления
+                    !nums.iSRoman(userInput[2]) && nums.iSRoman(userInput[0])) {
+                throw new Exception("//т.к. используются одновременно разные системы счисления");
             }
-        } else {
-            System.out.println(result);
+
+            if (nums.iSRoman(userInput[0])) { // преобразование римского числа в арабское
+                firstNumber = nums.romanToArabic(userInput[0]);
+                secondNumber = nums.romanToArabic(userInput[2]);
+            } else {
+                firstNumber = Integer.parseInt(userInput[0]);
+                secondNumber = Integer.parseInt(userInput[2]);
+            }
+
+            if (firstNumber < 0 || firstNumber > 10 || secondNumber > 10){ // ошибка с завершением программы,
+                // если какое-либо из чисел < 1 или > 10
+                throw new Exception("//т.к. значения не могут быть меньше 1 или больше 10");
+            }
+
+            switch (userInput[1]) {
+
+                case "+":
+                    result = firstNumber + secondNumber;
+                    break;
+
+                case "-":
+                    if (nums.iSRoman(userInput[0])) {
+                        if (secondNumber > firstNumber) { // ошибка с завершением программы, если
+                            // римское число отрицательное
+                            throw new Exception("//т.к. в римской системе нет отрицательных чисел");
+                        }
+                    } else {
+                        result = firstNumber - secondNumber;
+                        break;
+                    }
+
+                case "*":
+                    result = firstNumber * secondNumber;
+                    break;
+
+                case "/":
+                    result = firstNumber / secondNumber;
+                    break;
+            }
+
+            if (nums.iSRoman(userInput[0])) { // вывод результата
+                if (result == 0) {
+                    return "0";
+                } else {
+                    return nums.arabicToRoman(result);
+                }
+            } else {
+                return Integer.toString(result);
+            }
         }
     }
-}
 
 
-class Roman { // проверка числа на принадлежность к римским цифрам
+class Converter { // проверка числа на принадлежность к римским цифрам
     static String[] romanNums = new String[]{"0", "I", "V", "X", "L", "C", "D", "M"};
 
     boolean iSRoman (String userInput) {
@@ -109,35 +113,6 @@ class Roman { // проверка числа на принадлежность �
                 }
 
         return false;
-    }
-}
-
-class Calculator {  // метод для вычисления значений
-    int firstNumber;
-    int secondNumber;
-
-    int add(int userNumber1, int userNumber2) {
-        firstNumber = userNumber1;
-        secondNumber = userNumber2;
-        return firstNumber + secondNumber;
-    }
-
-    int subtraction(int userNumber1, int userNumber2) {
-        firstNumber = userNumber1;
-        secondNumber = userNumber2;
-        return firstNumber - secondNumber;
-    }
-
-    int multiplication(int userNumber1, int userNumber2) {
-        firstNumber = userNumber1;
-        secondNumber = userNumber2;
-        return firstNumber * secondNumber;
-    }
-
-    int division(int userNumber1, int userNumber2) {
-        firstNumber = userNumber1;
-        secondNumber = userNumber2;
-        return firstNumber / secondNumber;
     }
 
     int romanToArabic(String userNumber) { // преобразование римского числа в арабское
@@ -174,7 +149,7 @@ class Calculator {  // метод для вычисления значений
 //                    convertedNumber += roman[i]; - конкатенация
                     convertedNumber.append(roman[i]);
                 }
-            resultNumber++;
+                resultNumber++;
             }
 
         }
