@@ -80,7 +80,7 @@ public static String calc(String[] userInput) throws Exception {
                     break;
             }
 
-            if (nums.iSRoman(userInput[0])) { // вывод результата
+            if (nums.iSRoman(userInput[0])) {
                 if (result == 0) {
                     return "0";
                 } else {
